@@ -47,13 +47,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(LoginReqDto loginReqDto) {
+    public String login(LoginReqDto loginReqDto, HttpSession session) {
         if (loginReqDto.getUsername() == null || loginReqDto.getUsername().isEmpty()) {
             throw new CustomException("username을 입력해주세요", HttpStatus.BAD_REQUEST);
         }
         if (loginReqDto.getPassword() == null || loginReqDto.getPassword().isEmpty()) {
             throw new CustomException("password를 입력해주세요", HttpStatus.BAD_REQUEST);
         }
+
+        // password라는 변수를 만들어 줘도 되고, 값을 바로 Repository 매개변수 자리에 넣어도 됨.
         String password = PasswordEncoder.encode(loginReqDto.getPassword());
         User principal = userRepository.findByUsernameAndPassword(loginReqDto.getUsername(), password);
 
@@ -71,17 +73,13 @@ public class UserController {
         return "joinForm";
     }
 
-    @GetMapping({ "/", "/loginForm" })
+    @GetMapping("/loginForm")
     public String loginForm() {
         return "loginForm";
     }
 
-    @GetMapping("/main")
+    @GetMapping({ "/", "/main" })
     public String main() {
-        User principal = (User) session.getAttribute("principal");
-        if (principal == null) {
-            throw new CustomException("로그인을 먼저 해주세요", HttpStatus.BAD_REQUEST);
-        }
         return "main";
     }
 }
