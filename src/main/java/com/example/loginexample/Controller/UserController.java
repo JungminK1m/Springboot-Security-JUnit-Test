@@ -8,7 +8,7 @@ public class UserController {
 
     @GetMapping("/joinForm")
     public String joinForm() {
-        return "joinForm";
+        return "redirect:/loginform";
     }
 
     @GetMapping("/loginForm")
