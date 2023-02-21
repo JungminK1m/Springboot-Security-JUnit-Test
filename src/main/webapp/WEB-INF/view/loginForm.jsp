@@ -11,7 +11,13 @@
         </head>
 
         <body>
-            <h1>test</h1>
+            <h1>로그인페이지</h1>
+            <hr />
+            <form action="/login" method="post">
+                <input type="text" name="username" placeholder="Enter username" /><br />
+                <input type="password" name="password" placeholder="Enter password" /><br />
+                <button>로그인</button>
+            </form>
         </body>
 
         </html>
