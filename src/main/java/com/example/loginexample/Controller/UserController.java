@@ -80,6 +80,11 @@ public class UserController {
 
     @GetMapping({ "/", "/main" })
     public String main() {
+        User principal = (User) session.getAttribute("principal");
+
+        if (principal == null) {
+            throw new CustomException("로그인을 먼저 해주세요.", HttpStatus.BAD_REQUEST);
+        }
         return "main";
     }
 }
