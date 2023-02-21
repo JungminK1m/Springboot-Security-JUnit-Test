@@ -16,6 +16,7 @@ import com.example.loginexample.dto.UserReq.LoginReqDto;
 import com.example.loginexample.handler.exception.CustomException;
 import com.example.loginexample.model.User;
 import com.example.loginexample.model.UserRepository;
+import com.example.loginexample.security.PasswordEncoder;
 
 @Controller
 public class UserController {
@@ -40,8 +41,7 @@ public class UserController {
         if (joinReqDto.getEmail() == null || joinReqDto.getEmail().isEmpty()) {
             throw new CustomException("email을 입력해주세요", HttpStatus.BAD_REQUEST);
         }
-        // 컨벤션 : post, put, delete 할때만 하기
-        // 서비스 호출 => 회원가입();
+
         userService.회원가입(joinReqDto);
         return "redirect:/loginForm";
     }
@@ -54,8 +54,8 @@ public class UserController {
         if (loginReqDto.getPassword() == null || loginReqDto.getPassword().isEmpty()) {
             throw new CustomException("password를 입력해주세요", HttpStatus.BAD_REQUEST);
         }
-
-        User principal = userRepository.findByUsernameAndPassword(loginReqDto);
+        String password = PasswordEncoder.encode(loginReqDto.getPassword());
+        User principal = userRepository.findByUsernameAndPassword(loginReqDto.getUsername(), password);
 
         if (principal == null) {
             throw new CustomException("아이디 혹은 비밀번호가 틀렸습니다", HttpStatus.BAD_REQUEST);

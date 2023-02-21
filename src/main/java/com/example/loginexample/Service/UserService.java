@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.loginexample.dto.UserReq.JoinReqDto;
 import com.example.loginexample.handler.exception.CustomException;
 import com.example.loginexample.model.UserRepository;
+import com.example.loginexample.security.PasswordEncoder;
 
 @Service
 public class UserService {
@@ -17,7 +18,8 @@ public class UserService {
 
     @Transactional
     public void 회원가입(JoinReqDto joinReqDto) {
-        int result = userRepository.insert(joinReqDto); // joinReqDto(인수)를 매핑
+        int result = userRepository.insert(joinReqDto.getUsername(), PasswordEncoder.encode(joinReqDto.getPassword()),
+                joinReqDto.getEmail());
         if (result != 1) {
             throw new CustomException("회원가입 실패", HttpStatus.INTERNAL_SERVER_ERROR);
         }
