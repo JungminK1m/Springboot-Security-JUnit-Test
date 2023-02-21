@@ -1,11 +1,14 @@
 package com.example.loginexample.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.example.loginexample.dto.UserReq.JoinReqDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @MybatisTest
@@ -29,7 +32,4 @@ public class UserRepositoryTest {
         assertThat(JoinReqDto.get(1).getPassword());
     }
 
-    private Object assertThat(String username) {
-        return null;
-    }
 }
