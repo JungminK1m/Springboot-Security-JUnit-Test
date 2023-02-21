@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.loginexample.Service.UserService;
 import com.example.loginexample.dto.UserReq.JoinReqDto;
+import com.example.loginexample.dto.UserReq.LoginReqDto;
 import com.example.loginexample.handler.exception.CustomException;
+import com.example.loginexample.model.User;
+import com.example.loginexample.model.UserRepository;
 
 @Controller
 public class UserController {
@@ -22,6 +25,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/join")
     public String join(JoinReqDto joinReqDto) {
@@ -40,18 +46,42 @@ public class UserController {
         return "redirect:/loginForm";
     }
 
+    @PostMapping("/login")
+    public String login(LoginReqDto loginReqDto) {
+        if (loginReqDto.getUsername() == null || loginReqDto.getUsername().isEmpty()) {
+            throw new CustomException("username을 입력해주세요", HttpStatus.BAD_REQUEST);
+        }
+        if (loginReqDto.getPassword() == null || loginReqDto.getPassword().isEmpty()) {
+            throw new CustomException("password를 입력해주세요", HttpStatus.BAD_REQUEST);
+        }
+
+        User principal = userRepository.findByUsernameAndPassword(loginReqDto);
+
+        if (principal == null) {
+            throw new CustomException("아이디 혹은 비밀번호가 틀렸습니다", HttpStatus.BAD_REQUEST);
+        }
+        session.setAttribute("principal", principal);
+
+        return "redirect:/main";
+
+    }
+
     @GetMapping("/joinForm")
     public String joinForm() {
         return "joinForm";
     }
 
-    @GetMapping("/loginForm")
+    @GetMapping({ "/", "/loginForm" })
     public String loginForm() {
         return "loginForm";
     }
 
-    @GetMapping("/")
+    @GetMapping("/main")
     public String main() {
+        User principal = (User) session.getAttribute("principal");
+        if (principal == null) {
+            throw new CustomException("로그인을 먼저 해주세요", HttpStatus.BAD_REQUEST);
+        }
         return "main";
     }
 }
